@@ -147,6 +147,12 @@ Database (MongoDB)
 
 ## 🖥️ Getting Started
 
+## 1️⃣ Clone the repository
+```
+git clone https://github.com/your-username/CampusSyn.git
+cd CampusSyn/frontend
+```
+
 ### Frontend
 
 ```bash id="x7bfp4"
