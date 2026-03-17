@@ -149,7 +149,7 @@ Database (MongoDB)
 
 ## 1️⃣ Clone the repository
 ```
-git clone https://github.com/your-username/CampusSyn.git
+git clone https://github.com/coder-nikhil011/Campus_Syn.git
 cd CampusSyn/frontend
 ```
 
