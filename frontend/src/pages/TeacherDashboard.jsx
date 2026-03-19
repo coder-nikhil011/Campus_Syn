@@ -1,9 +1,8 @@
 import Layout from "../components/Layout";
-import teacherBg from "../assets/teacher.jpg";
 
 function TeacherDashboard() {
   return (
-    <Layout bgImage={teacherBg}>
+    <Layout>
 
       <h1 className="text-3xl font-bold mb-8 text-white">
         Teacher Dashboard

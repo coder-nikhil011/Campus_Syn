@@ -1,9 +1,9 @@
 import Layout from "../components/Layout";
-import studentBg from "../assets/student.jpg";
+
 
 function StudentDashboard() {
   return (
-    <Layout bgImage={studentBg} >
+    <Layout >
 
       <h1 className="text-3xl font-bold mb-8 text-gray-700">
         Student Dashboard

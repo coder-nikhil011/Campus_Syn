@@ -1,9 +1,8 @@
 import Layout from "../components/Layout";
-import organizerBg from "../assets/teacher.jpg";
 
 function OrganizerDashboard() {
   return (
-    <Layout bgImage={organizerBg}>
+    <Layout>
 
       <h1 className="text-3xl font-bold mb-8 text-white">
         Organizer Dashboard
