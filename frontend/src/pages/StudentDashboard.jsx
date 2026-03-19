@@ -1,27 +1,32 @@
-import Sidebar from "../components/Sidebar";
+import Layout from "../components/Layout";
+import studentBg from "../assets/student.jpg";
 
-function StudentDashboard(){
-  return(
-    <div style={{display:"flex"}}>
+function StudentDashboard() {
+  return (
+    <Layout bgImage={studentBg} >
 
-      <Sidebar />
+      <h1 className="text-3xl font-bold mb-8 text-gray-700">
+        Student Dashboard
+      </h1>
 
-      <div style={{marginLeft:"240px", padding:"30px"}}>
+      <div className="grid grid-cols-3 gap-6">
 
-        <h1>Student Dashboard</h1>
+        <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          📘 Assignments
+        </div>
 
-        <div style={{display:"flex",gap:"20px"}}>
+        <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          ⏰ Reminders
+        </div>
 
-          <div className="card">Assignments</div>
-          <div className="card">Reminders</div>
-          <div className="card">Events</div>
-
+        <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          🎉 Events
         </div>
 
       </div>
 
-    </div>
-  )
+    </Layout>
+  );
 }
 
-export default StudentDashboard
+export default StudentDashboard;
