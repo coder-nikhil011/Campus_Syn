@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import adminImg from "../assets/admin.avif";
 
+
 function AdminLogin() {
   const [step, setStep] = useState(1);
   const [uid, setUid] = useState("");
@@ -13,11 +14,19 @@ function AdminLogin() {
     setStep(step + 1);
   };
 
-  const handleLogin = () => {
-    if (!password) return alert("Enter Password");
-    // ✅ Admin always goes to Admin Dashboard
+const handleLogin = async () => {
+  try {
+    await API.post("/auth/login", {
+      uid,
+      password,
+      role: "Admin",
+    });
+
     navigate("/admin-dashboard");
-  };
+  } catch {
+    alert("Invalid Admin Credentials");
+  }
+};
 
   return (
     <div className="min-h-screen relative flex items-center justify-center">

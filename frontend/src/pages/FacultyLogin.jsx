@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import facultyImg from "../assets/faculty.jpg";
 
 function FacultyLogin() {
   const [step, setStep] = useState(1);
@@ -14,22 +15,29 @@ function FacultyLogin() {
     setStep(step + 1);
   };
 
-  const handleLogin = () => {
-    if (!password) return alert("Enter Password");
+  const handleLogin = async () => {
+  try {
+    await API.post("/auth/login", {
+      uid,
+      password,
+      role,
+    });
+
     if (role === "Teacher") {
       navigate("/teacher-dashboard");
-    } else if (role === "Organizer") {
-      navigate("/organizer-dashboard");
     } else {
-      alert("Invalid role");
+      navigate("/organizer-dashboard");
     }
-  };
+  } catch {
+    alert("Invalid Faculty Credentials");
+  }
+};
 
   return (
     <div className="min-h-screen relative flex items-center justify-center">
       {/* Background */}
       <img
-        src="/faculty.jpg"
+        src={facultyImg}
         alt="faculty background"
         className="absolute w-full h-full object-cover"
       />
