@@ -10,26 +10,45 @@ function StudentLogin() {
   const [uid, setUid] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!uid) return alert("Enter User ID");
-    setStep(2);
+
+    try {
+      const res = await API.post("/auth/check-user", { uid });
+
+      if (res.data.exists) {
+        setStep(2);   // ✅ only if user exists
+      } else {
+        alert("User not found ❌");
+      }
+    } catch (err) {
+      console.log("ERROR:", err);   // 🔥 show full error
+      alert(err.response?.data?.msg || "Error checking user");
+    }
   };
 
   const handleLogin = async () => {
-    if (!password) return alert("Enter Password");
+  try {
+    console.log("Sending:", { uid, password, role: "Student" });
 
-    try {
-      await API.post("/auth/login", {
-        uid,
-        password,
-        role: "Student",
-      });
+    const res = await API.post("/auth/login", {
+      uid: uid.toString().trim(),
+      password: password.trim(),
+      role: "Student",
+    });
 
-      navigate("/student-dashboard");
-    } catch {
-      alert("Invalid Student Credentials");
-    }
-  };
+    console.log("Response:", res.data);
+
+    // ✅ Save JWT token and user info
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    navigate("/student-dashboard"); // ✅ redirect after login
+  } catch (err) {
+    console.log(err.response?.data); 
+    alert(err.response?.data?.msg || "Login Failed");
+  }
+};
 
   return (
     <div className="min-h-screen relative flex items-center justify-center">
