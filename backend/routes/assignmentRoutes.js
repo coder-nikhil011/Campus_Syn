@@ -1,36 +1,32 @@
-import express from "express";
-import Assignment from "../models/Assignment.js";
-import upload from "../middleware/uploadMiddleware.js";
-
+const express = require("express");
 const router = express.Router();
+const {
+  getAssignments,
+  getAssignmentById,
+  createAssignment,
+  updateAssignment,
+  deleteAssignment,
+  submitAssignment
+} = require("../controllers/assignmentController");
+const auth = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
-// CREATE (with file)
-router.post("/", upload.single("file"), async (req, res) => {
-  const data = new Assignment({
-    ...req.body,
-    file: req.file?.filename,
-  });
+// READ all assignments
+router.get("/", auth, getAssignments);
 
-  await data.save();
-  res.json(data);
-});
+// READ single assignment
+router.get("/:id", auth, getAssignmentById);
 
-// READ
-router.get("/", async (req, res) => {
-  const data = await Assignment.find();
-  res.json(data);
-});
+// CREATE new assignment (faculty/admin only)
+router.post("/", auth, upload.single("file"), createAssignment);
 
-// UPDATE
-router.put("/:id", async (req, res) => {
-  const data = await Assignment.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(data);
-});
+// UPDATE assignment
+router.put("/:id", auth, upload.single("file"), updateAssignment);
 
-// DELETE
-router.delete("/:id", async (req, res) => {
-  await Assignment.findByIdAndDelete(req.params.id);
-  res.json({ msg: "Deleted" });
-});
+// DELETE assignment
+router.delete("/:id", auth, deleteAssignment);
 
-export default router;
+// SUBMIT assignment (student uploads file)
+router.post("/submit", auth, upload.single("file"), submitAssignment);
+
+module.exports = router;

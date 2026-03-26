@@ -1,31 +1,27 @@
-import express from "express";
-import Event from "../models/Event.js";
-
+const express = require("express");
 const router = express.Router();
+const {
+  getEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent
+} = require("../controllers/eventController");
+const auth = require("../middleware/authMiddleware");
 
-// CREATE
-router.post("/", async (req, res) => {
-  const data = new Event(req.body);
-  await data.save();
-  res.json(data);
-});
+// READ all events
+router.get("/", auth, getEvents);
 
-// READ
-router.get("/", async (req, res) => {
-  const data = await Event.find();
-  res.json(data);
-});
+// READ single event
+router.get("/:id", auth, getEventById);
 
-// UPDATE
-router.put("/:id", async (req, res) => {
-  const data = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(data);
-});
+// CREATE new event
+router.post("/", auth, createEvent);
 
-// DELETE
-router.delete("/:id", async (req, res) => {
-  await Event.findByIdAndDelete(req.params.id);
-  res.json({ msg: "Deleted" });
-});
+// UPDATE event
+router.put("/:id", auth, updateEvent);
 
-export default router;
+// DELETE event
+router.delete("/:id", auth, deleteEvent);
+
+module.exports = router;
