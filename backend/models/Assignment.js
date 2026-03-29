@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
-const schema = new mongoose.Schema({
-  title: String,
+const assignmentSchema = new mongoose.Schema({
+  title: { type: String, required: true },
   description: String,
-  subject: String,
-  dueDate: String,
-  file: String,
-  createdBy: String,
+  dueDate: { type: Date, required: true },
+  filePath: String, // uploaded file path
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // faculty/admin
+  createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Assignment", schema);
+const Assignment = mongoose.model("Assignment", assignmentSchema);
+export default Assignment;

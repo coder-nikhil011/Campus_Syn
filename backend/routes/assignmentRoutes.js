@@ -1,15 +1,16 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import {
   getAssignments,
   getAssignmentById,
   createAssignment,
   updateAssignment,
   deleteAssignment,
   submitAssignment
-} = require("../controllers/assignmentController");
-const auth = require("../middleware/authMiddleware");
-const upload = require("../middleware/uploadMiddleware");
+} from "../controllers/assignmentController.js";
+import auth from "../middleware/authMiddleware.js";
+import upload from "../middleware/uploadMiddleware.js";
+
+const router = express.Router();
 
 // READ all assignments
 router.get("/", auth, getAssignments);
@@ -29,4 +30,4 @@ router.delete("/:id", auth, deleteAssignment);
 // SUBMIT assignment (student uploads file)
 router.post("/submit", auth, upload.single("file"), submitAssignment);
 
-module.exports = router;
+export default router;
