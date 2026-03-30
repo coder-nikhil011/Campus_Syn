@@ -1,33 +1,49 @@
-import express from "express";
-import {
-  getAssignments,
-  getAssignmentById,
-  createAssignment,
-  updateAssignment,
-  deleteAssignment,
-  submitAssignment
-} from "../controllers/assignmentController.js";
-import auth from "../middleware/authMiddleware.js";
-import upload from "../middleware/uploadMiddleware.js";
+import mongoose from "mongoose";
 
-const router = express.Router();
+// ✅ Sub-schema for student submissions
+const submissionSchema = new mongoose.Schema(
+  {
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    studentName: { type: String },
+    studentUid:  { type: String },
+    note:        { type: String, default: "" },
+    status: {
+      type: String,
+      enum: ["submitted", "late"],
+      default: "submitted",
+    },
+  },
+  { timestamps: true }  // gives submittedAt automatically
+);
 
-// READ all assignments
-router.get("/", auth, getAssignments);
+const assignmentSchema = new mongoose.Schema(
+  {
+    title:       { type: String, required: true },
+    description: { type: String, default: "" },
+    subject:     { type: String, default: "" },       // ✅ added — frontend uses a.subject
+    dueDate:     { type: Date,   required: true },
+    totalMarks:  { type: Number, default: 100 },      // ✅ added
+    filePath:    { type: String, default: "" },        // uploaded file
 
-// READ single assignment
-router.get("/:id", auth, getAssignmentById);
+    // ✅ Target specific students
+    targetSemester:   { type: Number, default: null },
+    targetDepartment: { type: String, default: null },
 
-// CREATE new assignment (faculty/admin only)
-router.post("/", auth, upload.single("file"), createAssignment);
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
-// UPDATE assignment
-router.put("/:id", auth, upload.single("file"), updateAssignment);
+    // ✅ Track who submitted
+    submissions: [submissionSchema],
+  },
+  { timestamps: true }
+);
 
-// DELETE assignment
-router.delete("/:id", auth, deleteAssignment);
-
-// SUBMIT assignment (student uploads file)
-router.post("/submit", auth, upload.single("file"), submitAssignment);
-
-export default router;
+const Assignment = mongoose.model("Assignment", assignmentSchema);
+export default Assignment;

@@ -1,27 +1,39 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";           // ✅ ES module import, not require()
+import path from "path";
+import fs from "fs";
 
-// Storage configuration
+// ✅ Dynamic destination — decided per route via req.uploadPath
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/assignments"); // save files in backend/uploads/assignments
+    // Routes set req.uploadPath, fallback to general uploads/
+    const dir = req.uploadPath || "uploads/general";
+    // Create folder if it doesn't exist
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // unique filename
-  }
+    // ✅ Sanitize original name + unique timestamp
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext).replace(/\s+/g, "-");
+    cb(null, `${base}-${Date.now()}${ext}`);
+  },
 });
 
-// File filter (optional: restrict to PDFs/images)
+// ✅ Allow documents and images
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /pdf|doc|docx|jpg|jpeg|png/;
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (allowedTypes.test(ext)) {
+  const allowed = /pdf|doc|docx|jpg|jpeg|png|avif|webp/;
+  const ext = path.extname(file.originalname).toLowerCase().replace(".", "");
+  if (allowed.test(ext)) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file type"), false);
+    cb(new Error(`File type not allowed: ${ext}`), false);
   }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // ✅ 5MB max
+});
 
-module.exports = upload;
+export default upload;

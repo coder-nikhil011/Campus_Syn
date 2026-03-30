@@ -1,24 +1,26 @@
 import express from "express";
 import {
   getUsers,
+  getUsersByRole,
   getUserById,
   updateUser,
-  deleteUser
+  toggleUserStatus,
+  deleteUser,
 } from "../controllers/userController.js";
-import auth from "../middleware/authMiddleware.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// READ all users
-router.get("/", auth, getUsers);
+// ✅ Admin only — get all users or filter by role
+router.get("/",            protect, authorize("admin"), getUsers);
+router.get("/role/:role",  protect, authorize("admin"), getUsersByRole);
 
-// READ single user
-router.get("/:id", auth, getUserById);
+// ✅ Admin only — get single user
+router.get("/:id",         protect, authorize("admin"), getUserById);
 
-// UPDATE user
-router.put("/:id", auth, updateUser);
-
-// DELETE user
-router.delete("/:id", auth, deleteUser);
+// ✅ Admin only — update, toggle, delete
+router.put("/:id",         protect, authorize("admin"), updateUser);
+router.put("/:id/toggle",  protect, authorize("admin"), toggleUserStatus);
+router.delete("/:id",      protect, authorize("admin"), deleteUser);
 
 export default router;
