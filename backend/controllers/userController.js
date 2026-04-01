@@ -78,3 +78,29 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+
+export const loginUser = async (req, res) => {
+  try {
+    const { uid, password, role } = req.body;
+
+    console.log("👉 Request Body:", req.body);
+
+    const user = await User.findOne({ uid: uid.trim(), role: role.toLowerCase() });
+
+    console.log("👉 User from DB:", user);
+
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    const isMatch = await user.comparePassword(password);
+
+    console.log("👉 Password Match:", isMatch);
+
+    if (!isMatch) return res.status(401).json({ msg: "Invalid password" });
+
+    res.json({ msg: "Login Success" });
+
+  } catch (err) {
+    console.log("❌ Error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
